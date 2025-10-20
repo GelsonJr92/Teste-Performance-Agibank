@@ -1,0 +1,50 @@
+# Arquivos de resultados de testes
+*.jtl
+*.log
+
+# Diretórios de relatórios
+reports/
+results/
+
+# Arquivos temporários do JMeter
+jmeter.log
+*.tmp
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de backup
+*~
+*.bak
+*.backup
+*.orig
+
+# Logs
+logs/
+*.log
+
+# Arquivos de configuração local
+local.properties
+user.properties
+
+# Certificados e chaves
+*.p12
+*.jks
+*.key
+*.crt
+*.pem
+
+# Cache
+.cache/
+node_modules/
+
+# Arquivos de OS
+.directory
+desktop.ini

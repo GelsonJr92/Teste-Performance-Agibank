@@ -1,0 +1,11 @@
+name,address,city,state,zipCode,cardType,creditCardNumber,creditCardMonth,creditCardYear,nameOnCard
+João Silva,Rua das Flores 123,São Paulo,SP,01234-567,Visa,4111111111111111,12,2025,João Silva
+Maria Santos,Av. Paulista 1000,São Paulo,SP,01310-100,MasterCard,5555555555554444,06,2026,Maria Santos
+Pedro Oliveira,Rua da Consolação 500,São Paulo,SP,01302-000,American Express,378282246310005,03,2025,Pedro Oliveira
+Ana Costa,Av. Ipiranga 200,São Paulo,SP,01046-010,Visa,4000000000000002,09,2026,Ana Costa
+Carlos Ferreira,Rua Augusta 800,São Paulo,SP,01305-000,MasterCard,5105105105105100,11,2025,Carlos Ferreira
+Lucia Mendes,Av. Brigadeiro Faria Lima 3000,São Paulo,SP,04538-132,Visa,4012888888881881,08,2026,Lucia Mendes
+Roberto Lima,Rua Oscar Freire 1200,São Paulo,SP,01426-001,American Express,371449635398431,05,2025,Roberto Lima
+Fernanda Rocha,Av. Europa 158,São Paulo,SP,01449-000,MasterCard,5301250070000191,02,2026,Fernanda Rocha
+Marcos Alves,Rua Haddock Lobo 595,São Paulo,SP,01414-001,Visa,4222222222222,07,2025,Marcos Alves
+Juliana Prado,Av. Rebouças 1368,São Paulo,SP,05401-200,MasterCard,5200828282828210,10,2026,Juliana Prado
