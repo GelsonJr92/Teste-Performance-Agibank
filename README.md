@@ -1,4 +1,4 @@
-# BlazeDemo Performance Test Suite# BlazeDemo Performance Test Suite# Teste de Performance BlazeDDemo - JMeter
+# Teste de Performance BlazeDDemo - JMeter
 
 
 
