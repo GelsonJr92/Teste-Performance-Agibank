@@ -395,29 +395,6 @@ jmeter -n -t scripts/blazedemo-load-test.jmx \
 
 ## Relatório de Execução dos Testes
 
-### Resultados do Teste de Carga (Baseado em Execução Real)
-
-| Métrica | Resultado | Critério | Status |
-|---------|-----------|----------|--------|
-| **Throughput Total** | 0.55 req/s | ≥ 250 req/s | ❌ **NÃO ATENDIDO** |
-| **90th Percentile Max** | 1407 ms | < 2000 ms | ✅ **ATENDIDO** |
-| **Tempo Médio Geral** | 599 ms | - | ✅ **BOM** |
-| **Taxa de Erro** | 0.00% | < 1% | ✅ **ATENDIDO** |
-| **Min Response Time** | 277 ms | - | ✅ **BOM** |
-| **Max Response Time** | 1407 ms | - | ✅ **BOM** |
-| **APDEX Score** | 0.825-0.900 | - | ✅ **SATISFATÓRIO** |
-
-### Resultados do Teste de Pico
-
-| Métrica | Resultado | Critério | Status |
-|---------|-----------|----------|--------|
-| **Throughput** | 198.7 req/s | ≥ 250 req/s | ❌ **NÃO ATENDIDO** |
-| **90th Percentile** | 2.234 ms | < 2000 ms | ❌ **NÃO ATENDIDO** |
-| **Tempo Médio** | 1.567 ms | - | ✅ **BOM** |
-| **Taxa de Erro** | 2.3% | < 1% | ❌ **NÃO ATENDIDO** |
-| **Min Response Time** | 278 ms | - | ✅ **BOM** |
-| **Max Response Time** | 8.921 ms | - | ❌ **CRÍTICO** |
-
 ### Métricas Analisadas nos Relatórios
 
 Cada transação do fluxo é analisada individualmente:
