@@ -1,285 +1,512 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="BlazeDemo Performance Test" enabled="true">
-      <stringProp name="TestPlan.comments">Teste de Performance BlazeDemo - Configuração Estável</stringProp>
+
+    <!-- ================================================================ -->
+    <!-- LOAD TEST - BlazeDemo Performance Suite                          -->
+    <!-- Objetivo: Validar estabilidade sob carga sustentada              -->
+    <!-- Criterios de Aceite:                                             -->
+    <!--   REQ-001: Throughput >= 250 req/s                               -->
+    <!--   REQ-002: p90 Response Time < 2000ms                           -->
+    <!--   REQ-003: Error Rate < 1%                                       -->
+    <!--   REQ-004: Homepage SLA < 3000ms                                 -->
+    <!--   REQ-005: Search SLA < 5000ms                                   -->
+    <!--   REQ-006: Purchase SLA < 8000ms                                 -->
+    <!-- ================================================================ -->
+
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan"
+              testname="BlazeDemo - Load Test (Carga Estavel)" enabled="true">
+      <stringProp name="TestPlan.comments">
+        LOAD TEST | Carga Estavel e Sustentada
+        Rastreabilidade: REQ-001 ao REQ-006
+        Override via CLI: -JBASE_HOST=staging.app.com -JTHREADS=200 -JDURATION=300
+      </stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
-      <elementProp name="TestPlan.arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+
+      <!-- ============================================================== -->
+      <!-- VARIAVEIS GLOBAIS - Todas overridaveis via -JVARIAVEL=valor    -->
+      <!-- ============================================================== -->
+      <elementProp name="TestPlan.arguments" elementType="Arguments"
+                   guiclass="ArgumentsPanel" testclass="Arguments"
+                   testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments">
-          <elementProp name="BASE_URL" elementType="Argument">
-            <stringProp name="Argument.name">BASE_URL</stringProp>
-            <stringProp name="Argument.value">https://blazedemo.com</stringProp>
+
+          <!-- Ambiente -->
+          <elementProp name="BASE_HOST" elementType="Argument">
+            <stringProp name="Argument.name">BASE_HOST</stringProp>
+            <stringProp name="Argument.value">${__P(BASE_HOST,blazedemo.com)}</stringProp>
+            <stringProp name="Argument.desc">Host alvo - override: -JBASE_HOST=staging.example.com</stringProp>
           </elementProp>
+          <elementProp name="PROTOCOL" elementType="Argument">
+            <stringProp name="Argument.name">PROTOCOL</stringProp>
+            <stringProp name="Argument.value">${__P(PROTOCOL,https)}</stringProp>
+            <stringProp name="Argument.desc">Protocolo - override: -JPROTOCOL=http</stringProp>
+          </elementProp>
+
+          <!-- Carga -->
           <elementProp name="THREADS" elementType="Argument">
             <stringProp name="Argument.name">THREADS</stringProp>
-            <stringProp name="Argument.value">100</stringProp>
+            <stringProp name="Argument.value">${__P(THREADS,100)}</stringProp>
+            <stringProp name="Argument.desc">Numero de usuarios simultaneos</stringProp>
           </elementProp>
           <elementProp name="RAMPUP" elementType="Argument">
             <stringProp name="Argument.name">RAMPUP</stringProp>
-            <stringProp name="Argument.value">30</stringProp>
+            <stringProp name="Argument.value">${__P(RAMPUP,30)}</stringProp>
+            <stringProp name="Argument.desc">Tempo de ramp-up em segundos</stringProp>
           </elementProp>
           <elementProp name="DURATION" elementType="Argument">
             <stringProp name="Argument.name">DURATION</stringProp>
-            <stringProp name="Argument.value">120</stringProp>
+            <stringProp name="Argument.value">${__P(DURATION,120)}</stringProp>
+            <stringProp name="Argument.desc">Duracao total do teste em segundos</stringProp>
           </elementProp>
+
+          <!-- SLA Thresholds (ms) - REQ-004, REQ-005, REQ-006 -->
+          <elementProp name="SLA_HOMEPAGE" elementType="Argument">
+            <stringProp name="Argument.name">SLA_HOMEPAGE</stringProp>
+            <stringProp name="Argument.value">${__P(SLA_HOMEPAGE,3000)}</stringProp>
+            <stringProp name="Argument.desc">SLA Homepage em ms (REQ-004)</stringProp>
+          </elementProp>
+          <elementProp name="SLA_SEARCH" elementType="Argument">
+            <stringProp name="Argument.name">SLA_SEARCH</stringProp>
+            <stringProp name="Argument.value">${__P(SLA_SEARCH,5000)}</stringProp>
+            <stringProp name="Argument.desc">SLA Busca/Selecao em ms (REQ-005)</stringProp>
+          </elementProp>
+          <elementProp name="SLA_PURCHASE" elementType="Argument">
+            <stringProp name="Argument.name">SLA_PURCHASE</stringProp>
+            <stringProp name="Argument.value">${__P(SLA_PURCHASE,8000)}</stringProp>
+            <stringProp name="Argument.desc">SLA Compra em ms (REQ-006)</stringProp>
+          </elementProp>
+
         </collectionProp>
       </elementProp>
-      <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
+
     <hashTree>
-      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
-        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+
+      <!-- ============================================================== -->
+      <!-- CONFIGURACAO HTTP GLOBAL - Herdada por todos os samplers       -->
+      <!-- ============================================================== -->
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement"
+                         testname="[CONFIG] HTTP Request Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                     guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
           <collectionProp name="Arguments.arguments"/>
         </elementProp>
-        <stringProp name="HTTPSampler.domain">${BASE_URL}</stringProp>
+        <stringProp name="HTTPSampler.domain">${__P(BASE_HOST,blazedemo.com)}</stringProp>
         <stringProp name="HTTPSampler.port"></stringProp>
-        <stringProp name="HTTPSampler.protocol">https</stringProp>
-        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.protocol">${__P(PROTOCOL,https)}</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
         <stringProp name="HTTPSampler.path"></stringProp>
         <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
         <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
-        <stringProp name="HTTPSampler.response_timeout">10000</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">15000</stringProp>
       </ConfigTestElement>
       <hashTree/>
-      
-      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+
+      <!-- Cookie Manager - Sessao isolada por thread (usuario) -->
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager"
+                     testname="[CONFIG] HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies"/>
-        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        <boolProp name="CookieManager.clearEachIteration">true</boolProp>
       </CookieManager>
       <hashTree/>
-      
-      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager" enabled="true">
-        <boolProp name="clearEachIteration">false</boolProp>
+
+      <!-- Cache Manager - Simula comportamento real de browser -->
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager"
+                    testname="[CONFIG] HTTP Cache Manager" enabled="true">
+        <boolProp name="clearEachIteration">true</boolProp>
         <boolProp name="useExpires">true</boolProp>
         <boolProp name="CacheManager.controlledByThread">false</boolProp>
       </CacheManager>
       <hashTree/>
-      
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Flight Routes Data" enabled="true">
+
+      <!-- ============================================================== -->
+      <!-- DADOS DE TESTE - Isolados por thread (shareMode.thread)        -->
+      <!-- ============================================================== -->
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet"
+                  testname="[DATA] Flight Routes" enabled="true">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
         <stringProp name="filename">data/flight-routes.csv</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">false</boolProp>
         <boolProp name="recycle">true</boolProp>
-        <stringProp name="shareMode">shareMode.all</stringProp>
+        <stringProp name="shareMode">shareMode.thread</stringProp>
         <boolProp name="stopThread">false</boolProp>
         <stringProp name="variableNames">departure_city,destination_city</stringProp>
       </CSVDataSet>
       <hashTree/>
-      
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Test Data" enabled="true">
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet"
+                  testname="[DATA] User Profiles" enabled="true">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
         <stringProp name="filename">data/test-data.csv</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">false</boolProp>
         <boolProp name="recycle">true</boolProp>
-        <stringProp name="shareMode">shareMode.all</stringProp>
+        <stringProp name="shareMode">shareMode.thread</stringProp>
         <boolProp name="stopThread">false</boolProp>
-        <stringProp name="variableNames">name,address,city,state,zip,card_type,card_number,card_month,card_year,card_name</stringProp>
+        <stringProp name="variableNames">name,address,city,state,zipCode,cardType,creditCardNumber,creditCardMonth,creditCardYear,nameOnCard</stringProp>
       </CSVDataSet>
       <hashTree/>
 
-      <!-- PERFORMANCE TEST GROUP -->
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="BlazeDemo Users - Performance Test" enabled="true">
+      <!-- ============================================================== -->
+      <!-- THREAD GROUP - Carga Estavel                                   -->
+      <!-- Um unico grupo garante metricas puras e compalaveis            -->
+      <!-- ============================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup"
+                   testname="[LOAD] BlazeDemo Users - Carga Estavel" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControllerGui" testclass="LoopController" testname="Loop Controller" enabled="true">
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"
+                     guiclass="LoopControllerGui" testclass="LoopController"
+                     testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${THREADS}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${RAMPUP}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(THREADS,100)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(RAMPUP,30)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${DURATION}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(DURATION,120)}</stringProp>
         <stringProp name="ThreadGroup.delay">0</stringProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
       </ThreadGroup>
+
       <hashTree>
-        <!-- 01 - Homepage -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 - Homepage" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+
+        <!-- ============================================================ -->
+        <!-- STEP 01 - Homepage                                           -->
+        <!-- REQ-004: GET / deve retornar 200 em menos de 3000ms         -->
+        <!-- ============================================================ -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="01 - GET / (Homepage)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">blazedemo.com</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${SLA_HOMEPAGE}</stringProp>
         </HTTPSamplerProxy>
+        <hashTree>
+          <!-- Assertion: HTTP Status 200 [REQ-004] -->
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status HTTP 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-004] FALHA: Homepage retornou status diferente de 200 OK</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <!-- Assertion: Conteudo funcional esperado -->
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Conteudo Homepage" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="1001">BlazeDemo</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-004] FALHA: Conteudo esperado 'BlazeDemo' nao encontrado na Homepage</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <!-- Assertion: SLA de tempo de resposta [REQ-004] -->
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+                             testname="Assert - SLA Homepage (3000ms)" enabled="true">
+            <longProp name="DurationAssertion.duration">3000</longProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time: 1 a 3 segundos (simula usuario real lendo a pagina) -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 1-3s - Leitura Homepage" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+          <stringProp name="RandomTimer.range">2000</stringProp>
+        </UniformRandomTimer>
         <hashTree/>
 
-        <!-- 02 - Find Flights -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - Find Flights" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <!-- ============================================================ -->
+        <!-- STEP 02 - Find Flights                                       -->
+        <!-- REQ-005: POST /reserve.php deve retornar 200 em < 5000ms    -->
+        <!-- ============================================================ -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="02 - POST /reserve.php (Find Flights)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
-              <elementProp name="fromPort" elementType="Argument">
+              <elementProp name="fromPort" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">fromPort</stringProp>
                 <stringProp name="Argument.value">${departure_city}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="toPort" elementType="Argument">
+              <elementProp name="toPort" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">toPort</stringProp>
                 <stringProp name="Argument.value">${destination_city}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">blazedemo.com</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/reserve.php</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${SLA_SEARCH}</stringProp>
         </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status HTTP 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-005] FALHA: Find Flights retornou status diferente de 200 OK</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Conteudo Find Flights" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="1002">Flights from</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-005] FALHA: Conteudo 'Flights from' nao encontrado na resposta de Find Flights</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+                             testname="Assert - SLA Find Flights (5000ms)" enabled="true">
+            <longProp name="DurationAssertion.duration">5000</longProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time: 1 a 3 segundos (usuario analisa opcoes de voo) -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 1-3s - Analise de Voos" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+          <stringProp name="RandomTimer.range">2000</stringProp>
+        </UniformRandomTimer>
         <hashTree/>
 
-        <!-- 03 - Choose Flight -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - Choose Flight" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <!-- ============================================================ -->
+        <!-- STEP 03 - Choose Flight                                      -->
+        <!-- REQ-005: POST /purchase.php deve retornar 200 em < 5000ms   -->
+        <!-- ============================================================ -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="03 - POST /purchase.php (Choose Flight)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
-              <elementProp name="flight" elementType="Argument">
+              <elementProp name="flight" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">flight</stringProp>
                 <stringProp name="Argument.value">43</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">blazedemo.com</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/purchase.php</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${SLA_SEARCH}</stringProp>
         </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status HTTP 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-005] FALHA: Choose Flight retornou status diferente de 200 OK</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Conteudo Purchase Form" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="1003">Your flight from</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-005] FALHA: Formulario de compra 'Your flight from' nao encontrado</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+                             testname="Assert - SLA Choose Flight (5000ms)" enabled="true">
+            <longProp name="DurationAssertion.duration">5000</longProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time: 2 a 5 segundos (usuario preenche formulario de compra) -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 2-5s - Preenchimento de Formulario" enabled="true">
+          <stringProp name="ConstantTimer.delay">2000</stringProp>
+          <stringProp name="RandomTimer.range">3000</stringProp>
+        </UniformRandomTimer>
         <hashTree/>
 
-        <!-- 04 - Purchase Flight -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Purchase Flight" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <!-- ============================================================ -->
+        <!-- STEP 04 - Purchase Flight (Confirmacao de Compra)            -->
+        <!-- REQ-006: POST /confirmation.php deve retornar 200 em < 8000ms-->
+        <!-- ============================================================ -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="04 - POST /confirmation.php (Purchase)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
-              <elementProp name="inputName" elementType="Argument">
+              <elementProp name="inputName" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">inputName</stringProp>
                 <stringProp name="Argument.value">${name}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="address" elementType="Argument">
+              <elementProp name="address" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">address</stringProp>
                 <stringProp name="Argument.value">${address}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="city" elementType="Argument">
+              <elementProp name="city" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">city</stringProp>
                 <stringProp name="Argument.value">${city}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="state" elementType="Argument">
+              <elementProp name="state" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">state</stringProp>
                 <stringProp name="Argument.value">${state}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="zipCode" elementType="Argument">
+              <elementProp name="zipCode" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">zipCode</stringProp>
-                <stringProp name="Argument.value">${zip}</stringProp>
+                <stringProp name="Argument.value">${zipCode}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="cardType" elementType="Argument">
+              <elementProp name="cardType" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">cardType</stringProp>
-                <stringProp name="Argument.value">${card_type}</stringProp>
+                <stringProp name="Argument.value">${cardType}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="creditCardNumber" elementType="Argument">
+              <elementProp name="creditCardNumber" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">creditCardNumber</stringProp>
-                <stringProp name="Argument.value">${card_number}</stringProp>
+                <stringProp name="Argument.value">${creditCardNumber}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="creditCardMonth" elementType="Argument">
+              <elementProp name="creditCardMonth" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">creditCardMonth</stringProp>
-                <stringProp name="Argument.value">${card_month}</stringProp>
+                <stringProp name="Argument.value">${creditCardMonth}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="creditCardYear" elementType="Argument">
+              <elementProp name="creditCardYear" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">creditCardYear</stringProp>
-                <stringProp name="Argument.value">${card_year}</stringProp>
+                <stringProp name="Argument.value">${creditCardYear}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="nameOnCard" elementType="Argument">
+              <elementProp name="nameOnCard" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">nameOnCard</stringProp>
-                <stringProp name="Argument.value">${card_name}</stringProp>
+                <stringProp name="Argument.value">${nameOnCard}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">blazedemo.com</stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/confirmation.php</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${SLA_PURCHASE}</stringProp>
         </HTTPSamplerProxy>
-        <hashTree/>
-      </hashTree>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status HTTP 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-006] FALHA: Purchase retornou status diferente de 200 OK</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
 
-      <!-- STRESS GROUP 2: BOMBARDEIO ADICIONAL -->
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="💥 BOMBARDEIO ADICIONAL - 1000 Users" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControllerGui" testclass="LoopController" testname="Loop Controller" enabled="true">
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-          <intProp name="LoopController.loops">-1</intProp>
-        </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1000</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
-        <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">300</stringProp>
-        <stringProp name="ThreadGroup.delay">60</stringProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-      </ThreadGroup>
-      <hashTree>
-        <!-- Mesmo fluxo simplificado para bombardeio -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="STRESS - Homepage" enabled="true">
-          <stringProp name="HTTPSampler.domain">blazedemo.com</stringProp>
-          <stringProp name="HTTPSampler.path">/</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <stringProp name="HTTPSampler.connect_timeout">2000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">3000</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-      </hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Confirmacao de Compra" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="1004">Thank you for your purchase</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[REQ-006] FALHA: Confirmacao de compra nao encontrada na resposta</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
 
-      <!-- LISTENERS -->
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+                             testname="Assert - SLA Purchase (8000ms)" enabled="true">
+            <longProp name="DurationAssertion.duration">8000</longProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time: 1 a 2 segundos (usuario le confirmacao) -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 1-2s - Leitura Confirmacao" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+          <stringProp name="RandomTimer.range">1000</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+      </hashTree>
+      <!-- fim ThreadGroup -->
+
+      <!-- ============================================================== -->
+      <!-- LISTENERS - Coleta de metricas e evidencias                    -->
+      <!-- ============================================================== -->
+
+      <!-- View Results Tree: Desabilitado em execucao headless (alto consumo de memoria) -->
+      <!-- Habilitar apenas para debug local via GUI -->
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector"
+                       testname="[LISTENER] View Results Tree (GUI Debug Only)" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -302,7 +529,7 @@
             <fieldNames>true</fieldNames>
             <responseHeaders>false</responseHeaders>
             <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
+            <responseDataOnError>true</responseDataOnError>
             <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
             <assertionsResultsToSave>0</assertionsResultsToSave>
             <bytes>true</bytes>
@@ -313,11 +540,13 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">logs/load-test-results.jtl</stringProp>
+        <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      
-      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+
+      <!-- Summary Report: arquivo JTL completo para geracao de HTML report -->
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector"
+                       testname="[LISTENER] Summary Report" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -340,7 +569,7 @@
             <fieldNames>true</fieldNames>
             <responseHeaders>false</responseHeaders>
             <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
+            <responseDataOnError>true</responseDataOnError>
             <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
             <assertionsResultsToSave>0</assertionsResultsToSave>
             <bytes>true</bytes>
@@ -354,6 +583,49 @@
         <stringProp name="filename">logs/load-test-summary.jtl</stringProp>
       </ResultCollector>
       <hashTree/>
+
+      <!-- Errors Only: arquivo dedicado para evidencias de falha -->
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector"
+                       testname="[LISTENER] Errors Only" enabled="true">
+        <boolProp name="ResultCollector.error_logging">true</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>true</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename">logs/load-test-errors.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+
     </hashTree>
+    <!-- fim TestPlan hashTree -->
+
   </hashTree>
 </jmeterTestPlan>

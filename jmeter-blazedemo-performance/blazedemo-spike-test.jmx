@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6">
+  <hashTree>
+
+    <!-- ================================================================ -->
+    <!-- SPIKE TEST - BlazeDemo Performance Suite                         -->
+    <!-- Objetivo: Simular pico abrupto de trafego (ex: Black Friday)    -->
+    <!-- Metodologia: 0 -> pico maximo em segundos, mantendo, depois 0  -->
+    <!-- Rastreabilidade: REQ-SPIKE-001 ao REQ-SPIKE-003                 -->
+    <!--   REQ-SPIKE-001: Sistema deve absorver pico sem downtime         -->
+    <!--   REQ-SPIKE-002: Recovery < 60s apos remocao do pico            -->
+    <!--   REQ-SPIKE-003: Error rate durante pico deve ser documentada    -->
+    <!-- ================================================================ -->
+
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan"
+              testname="BlazeDemo - Spike Test (Pico Abrupto)" enabled="true">
+      <stringProp name="TestPlan.comments">
+        SPIKE TEST | Simula pico repentino de trafego
+        Cenario: Trafego normal -> pico extremo em segundos -> retorno ao normal
+        Analogia: Black Friday, campanhas virais, lancamento de produto
+        Override via CLI: -JBASE_HOST=staging.app.com -JTHREADS=500 -JSPIKE_DURATION=120
+      </stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+
+      <elementProp name="TestPlan.arguments" elementType="Arguments"
+                   guiclass="ArgumentsPanel" testclass="Arguments"
+                   testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_HOST" elementType="Argument">
+            <stringProp name="Argument.name">BASE_HOST</stringProp>
+            <stringProp name="Argument.value">${__P(BASE_HOST,blazedemo.com)}</stringProp>
+          </elementProp>
+          <elementProp name="PROTOCOL" elementType="Argument">
+            <stringProp name="Argument.name">PROTOCOL</stringProp>
+            <stringProp name="Argument.value">${__P(PROTOCOL,https)}</stringProp>
+          </elementProp>
+          <!-- Fase 1: Carga normal pre-pico -->
+          <elementProp name="BASELINE_THREADS" elementType="Argument">
+            <stringProp name="Argument.name">BASELINE_THREADS</stringProp>
+            <stringProp name="Argument.value">${__P(BASELINE_THREADS,20)}</stringProp>
+            <stringProp name="Argument.desc">Usuarios em carga normal antes do pico</stringProp>
+          </elementProp>
+          <!-- Fase 2: Pico abrupto -->
+          <elementProp name="SPIKE_THREADS" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_THREADS</stringProp>
+            <stringProp name="Argument.value">${__P(SPIKE_THREADS,500)}</stringProp>
+            <stringProp name="Argument.desc">Usuarios no pico - ramp-up agressivo</stringProp>
+          </elementProp>
+          <elementProp name="SPIKE_RAMPUP" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_RAMPUP</stringProp>
+            <stringProp name="Argument.value">${__P(SPIKE_RAMPUP,5)}</stringProp>
+            <stringProp name="Argument.desc">Segundos para atingir o pico (agressivo)</stringProp>
+          </elementProp>
+          <elementProp name="SPIKE_DURATION" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_DURATION</stringProp>
+            <stringProp name="Argument.value">${__P(SPIKE_DURATION,120)}</stringProp>
+            <stringProp name="Argument.desc">Duracao do pico em segundos</stringProp>
+          </elementProp>
+          <!-- SLA para spike (permissivo - analisamos degradacao, nao reprovamos) -->
+          <elementProp name="SLA_SPIKE" elementType="Argument">
+            <stringProp name="Argument.name">SLA_SPIKE</stringProp>
+            <stringProp name="Argument.value">${__P(SLA_SPIKE,15000)}</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+
+    <hashTree>
+
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement"
+                         testname="[CONFIG] HTTP Request Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                     guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">${__P(BASE_HOST,blazedemo.com)}</stringProp>
+        <stringProp name="HTTPSampler.port"></stringProp>
+        <stringProp name="HTTPSampler.protocol">${__P(PROTOCOL,https)}</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager"
+                     testname="[CONFIG] HTTP Cookie Manager" enabled="true">
+        <collectionProp name="CookieManager.cookies"/>
+        <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+      </CookieManager>
+      <hashTree/>
+
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager"
+                    testname="[CONFIG] HTTP Cache Manager" enabled="true">
+        <boolProp name="clearEachIteration">true</boolProp>
+        <boolProp name="useExpires">true</boolProp>
+      </CacheManager>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet"
+                  testname="[DATA] Flight Routes" enabled="true">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="filename">data/flight-routes.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.thread</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">departure_city,destination_city</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet"
+                  testname="[DATA] User Profiles" enabled="true">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="filename">data/test-data.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.thread</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">name,address,city,state,zipCode,cardType,creditCardNumber,creditCardMonth,creditCardYear,nameOnCard</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <!-- ============================================================== -->
+      <!-- FASE 1: Carga Normal (Baseline pre-pico)                        -->
+      <!-- Dura 60s para estabelecer baseline antes do pico               -->
+      <!-- ============================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup"
+                   testname="[SPIKE] Fase 1 - Carga Normal (Baseline 20 users)" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"
+                     guiclass="LoopControllerGui" testclass="LoopController"
+                     testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(BASELINE_THREADS,20)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">60</stringProp>
+        <stringProp name="ThreadGroup.delay">0</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="[BASELINE] 01 - GET / (Homepage)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[SPIKE-BASELINE] Homepage falhou antes do pico</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 1-3s" enabled="true">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+          <stringProp name="RandomTimer.range">2000</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+      </hashTree>
+
+      <!-- ============================================================== -->
+      <!-- FASE 2: PICO ABRUPTO                                           -->
+      <!-- Ramp-up agressivo para simular trafego viral/Black Friday      -->
+      <!-- ============================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup"
+                   testname="[SPIKE] Fase 2 - PICO ABRUPTO (500 users em 5s)" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"
+                     guiclass="LoopControllerGui" testclass="LoopController"
+                     testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(SPIKE_THREADS,500)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(SPIKE_RAMPUP,5)}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">${__P(SPIKE_DURATION,120)}</stringProp>
+        <stringProp name="ThreadGroup.delay">60</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy"
+                          testname="[PICO] 01 - GET / (Homepage)" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+                       guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${SLA_SPIKE}</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion"
+                             testname="Assert - Status 200 (Pico)" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">[SPIKE-PEAK] Homepage indisponivel durante pico - REQ-SPIKE-001 VIOLADO</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion"
+                             testname="Assert - SLA Spike (15000ms)" enabled="true">
+            <longProp name="DurationAssertion.duration">15000</longProp>
+          </DurationAssertion>
+          <hashTree/>
+        </hashTree>
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer"
+                            testname="[THINK TIME] 0.5-1.5s - Spike Mode" enabled="true">
+          <stringProp name="ConstantTimer.delay">500</stringProp>
+          <stringProp name="RandomTimer.range">1000</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+      </hashTree>
+
+      <!-- LISTENERS -->
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector"
+                       testname="[LISTENER] Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time><latency>true</latency><timestamp>true</timestamp>
+            <success>true</success><label>true</label><code>true</code>
+            <message>true</message><threadName>true</threadName><dataType>true</dataType>
+            <encoding>false</encoding><assertions>true</assertions><subresults>true</subresults>
+            <responseData>false</responseData><samplerData>false</samplerData><xml>false</xml>
+            <fieldNames>true</fieldNames><responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders><responseDataOnError>true</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes><sentBytes>true</sentBytes><url>true</url>
+            <threadCounts>true</threadCounts><idleTime>true</idleTime><connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename">logs/spike-test-summary.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector"
+                       testname="[LISTENER] Errors Only" enabled="true">
+        <boolProp name="ResultCollector.error_logging">true</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time><latency>true</latency><timestamp>true</timestamp>
+            <success>true</success><label>true</label><code>true</code>
+            <message>true</message><threadName>true</threadName>
+            <encoding>false</encoding><assertions>true</assertions>
+            <responseData>false</responseData><xml>false</xml>
+            <fieldNames>true</fieldNames><responseDataOnError>true</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <bytes>true</bytes><url>true</url><threadCounts>true</threadCounts>
+          </value>
+        </objProp>
+        <stringProp name="filename">logs/spike-test-errors.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

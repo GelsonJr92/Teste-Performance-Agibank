@@ -1,11 +1,95 @@
 name,address,city,state,zipCode,cardType,creditCardNumber,creditCardMonth,creditCardYear,nameOnCard
-João Silva,Rua das Flores 123,São Paulo,SP,01234-567,Visa,4111111111111111,12,2025,João Silva
-Maria Santos,Av. Paulista 1000,São Paulo,SP,01310-100,MasterCard,5555555555554444,06,2026,Maria Santos
-Pedro Oliveira,Rua da Consolação 500,São Paulo,SP,01302-000,American Express,378282246310005,03,2025,Pedro Oliveira
-Ana Costa,Av. Ipiranga 200,São Paulo,SP,01046-010,Visa,4000000000000002,09,2026,Ana Costa
-Carlos Ferreira,Rua Augusta 800,São Paulo,SP,01305-000,MasterCard,5105105105105100,11,2025,Carlos Ferreira
-Lucia Mendes,Av. Brigadeiro Faria Lima 3000,São Paulo,SP,04538-132,Visa,4012888888881881,08,2026,Lucia Mendes
-Roberto Lima,Rua Oscar Freire 1200,São Paulo,SP,01426-001,American Express,371449635398431,05,2025,Roberto Lima
-Fernanda Rocha,Av. Europa 158,São Paulo,SP,01449-000,MasterCard,5301250070000191,02,2026,Fernanda Rocha
-Marcos Alves,Rua Haddock Lobo 595,São Paulo,SP,01414-001,Visa,4222222222222,07,2025,Marcos Alves
-Juliana Prado,Av. Rebouças 1368,São Paulo,SP,05401-200,MasterCard,5200828282828210,10,2026,Juliana Prado
+João Silva,Rua das Flores 123,São Paulo,SP,01234-567,Visa,4111111111111111,12,2028,João Silva
+Maria Santos,Av. Paulista 1000,São Paulo,SP,01310-100,MasterCard,5555555555554444,06,2029,Maria Santos
+Pedro Oliveira,Rua da Consolação 500,São Paulo,SP,01302-000,American Express,378282246310005,03,2028,Pedro Oliveira
+Ana Costa,Av. Ipiranga 200,São Paulo,SP,01046-010,Visa,4242424242424242,09,2029,Ana Costa
+Carlos Ferreira,Rua Augusta 800,São Paulo,SP,01305-000,MasterCard,5105105105105100,11,2028,Carlos Ferreira
+Lucia Mendes,Av. Brigadeiro Faria Lima 3000,São Paulo,SP,04538-132,Visa,4012888888881881,08,2029,Lucia Mendes
+Roberto Lima,Rua Oscar Freire 1200,São Paulo,SP,01426-001,American Express,371449635398431,05,2028,Roberto Lima
+Fernanda Rocha,Av. Europa 158,São Paulo,SP,01449-000,MasterCard,5200828282828210,02,2029,Fernanda Rocha
+Marcos Alves,Rua Haddock Lobo 595,São Paulo,SP,01414-001,Visa,4000000000000002,07,2028,Marcos Alves
+Juliana Prado,Av. Rebouças 1368,São Paulo,SP,05401-200,MasterCard,5425233430109903,10,2029,Juliana Prado
+Bruno Cardoso,Rua Alameda Santos 200,São Paulo,SP,01419-000,Visa,4111111111111111,01,2028,Bruno Cardoso
+Camila Souza,Av. 9 de Julho 4500,São Paulo,SP,01406-100,MasterCard,5555555555554444,04,2029,Camila Souza
+Diego Pereira,Rua Pamplona 100,São Paulo,SP,01405-000,American Express,378282246310005,07,2028,Diego Pereira
+Rafaela Nunes,Av. Angélica 2100,São Paulo,SP,01228-200,Visa,4242424242424242,11,2029,Rafaela Nunes
+Thiago Martins,Rua Bela Cintra 750,São Paulo,SP,01415-000,MasterCard,5105105105105100,03,2028,Thiago Martins
+Patricia Lima,Av. Higienópolis 320,São Paulo,SP,01238-010,Visa,4012888888881881,09,2029,Patricia Lima
+Rodrigo Barbosa,Rua Itapeva 550,São Paulo,SP,01332-000,American Express,371449635398431,06,2028,Rodrigo Barbosa
+Aline Freitas,Av. Ibirapuera 2907,São Paulo,SP,04029-200,MasterCard,5200828282828210,12,2029,Aline Freitas
+Felipe Carvalho,Rua Groenlândia 445,São Paulo,SP,01434-000,Visa,4000000000000002,02,2028,Felipe Carvalho
+Tatiana Moreira,Av. Berrini 1681,São Paulo,SP,04571-011,MasterCard,5425233430109903,08,2029,Tatiana Moreira
+Eduardo Gomes,Rua Vergueiro 1000,São Paulo,SP,01504-000,Visa,4111111111111111,05,2028,Eduardo Gomes
+Viviane Castro,Av. Faria Lima 1811,São Paulo,SP,01451-001,MasterCard,5555555555554444,10,2029,Viviane Castro
+Leonardo Dias,Rua Três Rios 200,São Paulo,SP,01123-000,American Express,378282246310005,01,2028,Leonardo Dias
+Mariana Teixeira,Av. Nações Unidas 12901,São Paulo,SP,04578-000,Visa,4242424242424242,07,2029,Mariana Teixeira
+Gustavo Ramos,Rua Gomes de Carvalho 1609,São Paulo,SP,04547-006,MasterCard,5105105105105100,04,2028,Gustavo Ramos
+Isabela Ferreira,Av. Santo Amaro 4584,São Paulo,SP,04702-300,Visa,4012888888881881,11,2029,Isabela Ferreira
+André Nascimento,Rua Funchal 411,São Paulo,SP,04551-060,American Express,371449635398431,03,2028,André Nascimento
+Caroline Ribeiro,Av. Das Nações Unidas 3003,São Paulo,SP,04559-000,MasterCard,5200828282828210,09,2029,Caroline Ribeiro
+Henrique Araujo,Rua Ministro Nelson Hungria 200,São Paulo,SP,05690-050,Visa,4000000000000002,06,2028,Henrique Araujo
+Priscila Melo,Av. Chucri Zaidan 1240,São Paulo,SP,04583-110,MasterCard,5425233430109903,12,2029,Priscila Melo
+Lucas Borges,Rua Leopoldo Couto Magalhães 700,São Paulo,SP,04542-001,Visa,4111111111111111,02,2028,Lucas Borges
+Beatriz Cunha,Av. Morumbi 7500,São Paulo,SP,05724-000,MasterCard,5555555555554444,08,2029,Beatriz Cunha
+Renato Lopes,Rua Nebraska 475,São Paulo,SP,04560-010,American Express,378282246310005,05,2028,Renato Lopes
+Vanessa Rodrigues,Av. Engenheiro Luiz Carlos Berrini 1000,São Paulo,SP,04571-000,Visa,4242424242424242,10,2029,Vanessa Rodrigues
+Gabriel Torres,Rua João Cachoeira 1087,São Paulo,SP,04535-012,MasterCard,5105105105105100,01,2028,Gabriel Torres
+Larissa Vieira,Av. Dr. Chucri Zaidan 150,São Paulo,SP,04583-000,Visa,4012888888881881,07,2029,Larissa Vieira
+Fábio Mendes,Rua Pequetita 215,São Paulo,SP,04552-060,American Express,371449635398431,04,2028,Fábio Mendes
+Simone Carvalho,Av. Juscelino Kubitschek 2041,São Paulo,SP,04543-011,MasterCard,5200828282828210,11,2029,Simone Carvalho
+Alex Correia,Rua Funchal 263,São Paulo,SP,04551-060,Visa,4000000000000002,03,2028,Alex Correia
+Daniela Pinto,Av. Brigadeiro Faria Lima 4300,São Paulo,SP,04538-135,MasterCard,5425233430109903,09,2029,Daniela Pinto
+Marcelo Azevedo,Rua Carlos Weber 511,São Paulo,SP,05303-000,Visa,4111111111111111,06,2028,Marcelo Azevedo
+Cristiane Almeida,Av. Giovanni Gronchi 5400,São Paulo,SP,05724-003,MasterCard,5555555555554444,12,2029,Cristiane Almeida
+Rafael Campos,Rua Amauri 255,São Paulo,SP,01448-000,American Express,378282246310005,02,2028,Rafael Campos
+Mônica Teles,Av. Chedid Jafet 222,São Paulo,SP,04551-065,Visa,4242424242424242,08,2029,Mônica Teles
+Sérgio Monteiro,Rua Sergipe 1184,São Paulo,SP,01243-001,MasterCard,5105105105105100,05,2028,Sérgio Monteiro
+Juliana Brandão,Av. Rebouças 2729,São Paulo,SP,05402-600,Visa,4012888888881881,10,2029,Juliana Brandão
+Flávio Santos,Rua Pamplona 1197,São Paulo,SP,01405-200,American Express,371449635398431,01,2028,Flávio Santos
+Bianca Oliveira,Av. Rouxinol 574,São Paulo,SP,04516-001,MasterCard,5200828282828210,07,2029,Bianca Oliveira
+Leandro Costa,Rua Gomes de Carvalho 1195,São Paulo,SP,04547-002,Visa,4000000000000002,04,2028,Leandro Costa
+Débora Ferreira,Av. Waldemar Ferreira 166,São Paulo,SP,05508-050,MasterCard,5425233430109903,11,2029,Débora Ferreira
+Márcio Nogueira,Rua Cubatão 300,São Paulo,SP,04013-001,Visa,4111111111111111,03,2028,Márcio Nogueira
+Sandra Duarte,Av. São Luís 50,São Paulo,SP,01046-927,MasterCard,5555555555554444,09,2029,Sandra Duarte
+Paulo César,Rua Maestro Cardim 1170,São Paulo,SP,01323-001,American Express,378282246310005,06,2028,Paulo César
+Luana Figueiredo,Av. Washington Luís 6000,São Paulo,SP,04627-000,Visa,4242424242424242,12,2029,Luana Figueiredo
+Jorge Tavares,Rua Piauí 631,São Paulo,SP,01241-001,MasterCard,5105105105105100,02,2028,Jorge Tavares
+Adriana Coelho,Av. Lins de Vasconcelos 1222,São Paulo,SP,01538-001,Visa,4012888888881881,08,2029,Adriana Coelho
+Rogério Machado,Rua do Paraíso 518,São Paulo,SP,04103-001,American Express,371449635398431,05,2028,Rogério Machado
+Tainá Barbosa,Av. Moreira Guimarães 1259,São Paulo,SP,04074-100,MasterCard,5200828282828210,11,2029,Tainá Barbosa
+Wesley Lima,Rua Catanduvas 75,São Paulo,SP,04354-000,Visa,4000000000000002,01,2028,Wesley Lima
+Natália Andrade,Av. Dr. Dante Pazzanese 500,São Paulo,SP,04012-180,MasterCard,5425233430109903,07,2029,Natália Andrade
+César Cunha,Rua Verbo Divino 1488,São Paulo,SP,04719-002,Visa,4111111111111111,04,2028,César Cunha
+Elaine Machado,Av. Adolfo Pinheiro 1500,São Paulo,SP,04734-001,MasterCard,5555555555554444,10,2029,Elaine Machado
+Thales Marques,Rua Pedroso Alvarenga 1168,São Paulo,SP,04531-004,American Express,378282246310005,03,2028,Thales Marques
+Pamela Fontes,Av. Ibirapuera 110,São Paulo,SP,04028-000,Visa,4242424242424242,09,2029,Pamela Fontes
+Igor Vieira,Rua Itacolomi 600,São Paulo,SP,01239-020,MasterCard,5105105105105100,06,2028,Igor Vieira
+Cláudia Reis,Av. São João 454,São Paulo,SP,01036-000,Visa,4012888888881881,12,2029,Cláudia Reis
+Everton Pires,Rua Iguatemi 192,São Paulo,SP,01451-010,American Express,371449635398431,02,2028,Everton Pires
+Flávia Esteves,Av. Senador Queirós 900,São Paulo,SP,01017-000,MasterCard,5200828282828210,08,2029,Flávia Esteves
+Renata Bastos,Rua dos Pinheiros 584,São Paulo,SP,05422-001,Visa,4000000000000002,05,2028,Renata Bastos
+Lucas Ventura,Av. Brigadeiro Luiz Antônio 2232,São Paulo,SP,01402-000,MasterCard,5425233430109903,11,2029,Lucas Ventura
+Amanda Siqueira,Rua Bento Freitas 306,São Paulo,SP,01220-000,Visa,4111111111111111,01,2028,Amanda Siqueira
+Caio Braga,Av. 23 de Maio 1000,São Paulo,SP,04008-050,MasterCard,5555555555554444,07,2029,Caio Braga
+Letícia Fonseca,Rua Itapeva 65,São Paulo,SP,01332-000,American Express,378282246310005,04,2028,Letícia Fonseca
+Otávio Prado,Av. Trindade 350,Barueri,SP,06465-000,Visa,4242424242424242,10,2029,Otávio Prado
+Millena Castro,Rua Flórida 1703,Barueri,SP,06453-010,MasterCard,5105105105105100,03,2028,Millena Castro
+Henrique Leal,Av. Marcos Penteado de Ulhôa Rodrigues 939,Santana de Parnaíba,SP,06543-001,Visa,4012888888881881,09,2029,Henrique Leal
+Suelen Tavares,Rua Joaquim Floriano 960,São Paulo,SP,04534-004,American Express,371449635398431,06,2028,Suelen Tavares
+Bruno Menezes,Av. Roque Petroni Jr 1089,São Paulo,SP,04707-910,MasterCard,5200828282828210,12,2029,Bruno Menezes
+Déborah Mota,Rua Funchal 573,São Paulo,SP,04551-060,Visa,4000000000000002,02,2028,Déborah Mota
+Vinícius Corrêa,Av. Marginal Pinheiros 5200,São Paulo,SP,05693-000,MasterCard,5425233430109903,08,2029,Vinícius Corrêa
+Giovanna Lopes,Rua Indiana 100,São Paulo,SP,01456-000,Visa,4111111111111111,05,2028,Giovanna Lopes
+Arthur Alves,Av. Dr. Nilo Peçanha 199,São Paulo,SP,01303-904,MasterCard,5555555555554444,11,2029,Arthur Alves
+Isabella Carneiro,Rua Pamplona 518,São Paulo,SP,01405-100,American Express,378282246310005,01,2028,Isabella Carneiro
+Nathan Ribeiro,Av. Liberdade 360,São Paulo,SP,01503-000,Visa,4242424242424242,07,2029,Nathan Ribeiro
+Ayla Fernandes,Rua Coropé 115,São Paulo,SP,04145-040,MasterCard,5105105105105100,04,2028,Ayla Fernandes
+Lorenzo Silva,Av. Jabaquara 2958,São Paulo,SP,04046-500,Visa,4012888888881881,10,2029,Lorenzo Silva
+Helena Costa,Rua Domingos de Morais 1800,São Paulo,SP,04010-100,American Express,371449635398431,03,2028,Helena Costa
+Murilo Freitas,Av. Indianópolis 1060,São Paulo,SP,04063-002,MasterCard,5200828282828210,09,2029,Murilo Freitas
+Sabrina Mendes,Rua Tutóia 1157,São Paulo,SP,04007-003,Visa,4000000000000002,06,2028,Sabrina Mendes
+Enzo Marques,Av. Brigadeiro Faria Lima 2232,São Paulo,SP,01451-000,MasterCard,5425233430109903,12,2029,Enzo Marques
+Yasmin Nunes,Rua dos Italianos 380,São Paulo,SP,01131-000,Visa,4111111111111111,02,2028,Yasmin Nunes
+Cauã Teixeira,Av. Celso Garcia 4416,São Paulo,SP,03014-000,MasterCard,5555555555554444,08,2029,Cauã Teixeira
+Rebeca Cardoso,Rua da Glória 366,São Paulo,SP,01510-000,American Express,378282246310005,05,2028,Rebeca Cardoso
+Miguel Souza,Av. Paulista 2300,São Paulo,SP,01310-300,Visa,4242424242424242,11,2029,Miguel Souza
